@@ -1,6 +1,6 @@
 const http = require("http");
 const { readFileSync, existsSync } = require("fs");
-const { join } = require("path");
+const { join, extname } = require("path");
 
 const MIME_TYPES = {
   ".html": "text/html",
@@ -16,7 +16,7 @@ const server = http.createServer((req, res) => {
   let filePath = join(__dirname, fileRoute);
 
   if (existsSync(filePath)) {
-    const ext = String(require("path").extname(filePath)).toLowerCase();
+    const ext = String(extname(filePath)).toLowerCase();
     const contentType = MIME_TYPES[ext] || "text/plain";
 
     try {
