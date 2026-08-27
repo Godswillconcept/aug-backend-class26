@@ -1,1 +1,0 @@
-{"studentId":1,"math":98}

@@ -1,120 +1,95 @@
-// const isRead = true;
-// const user = {
-//   name: "John Doe",
-//   age: 30,
-//   nationality: "American",
+const pluralize = require("pluralize");
+const _ = require("lodash");
+const http = require("http");
+const { users } = require("./example");
+
+const word1 = "fish";
+const word2 = "developer";
+
+// console.log(
+//   `the plural of ${word1} based on the count ${0} is ${pluralize(word1, 0)}`,
+// );
+// console.log(
+//   `the plural of ${word2} based on the count ${0} is ${pluralize(word2, 0)}`,
+// );
+// console.log(
+//   `the plural of ${word1} based on the count ${0} is ${pluralize(word1, 0)}`,
+// );
+
+// console.log(pluralize.isPlural("developer"));
+// console.log(pluralize.isSingular("toothpaste"));
+// console.log(pluralize.plural("mouse"));
+// console.log(pluralize.singular("dice"));
+
+// const person = {
+//   name: "Aluko Tosin",
+//   email: "aluko.tosin@gmail.com",
+//   phone: "08036096348",
+//   address: {
+//     street: "123 Main St",
+//     city: "Akure",
+//     state: "Ondo",
+//     country: "Nigeria",
+//   },
 // };
-// const arr = [12, 78, 34, 56, 90];
-// const isAdmin = true;
-// // alert("Welcome to the NodeJS!");
+// const output = _.pick(person, ["name", "email", "phone"]);
+// console.log(output);
 
-// // user = "Stephen";
-// // console.log(user);
+// const capitalize = _.capitalize("aluko tosin");
+// console.log(capitalize);
 
-// // const volume;
-// // volume = 100;
+// const words = ["aluko", "tosin", "august", "developer", "ogbe"];
+// const capitalizeWords = _.map(words, _.capitalize);
+// console.log(capitalizeWords);
+// const camelCase = _.camelCase("aluko tosin");
+// console.log(camelCase);
+// const snakeCase = _.snakeCase("aluko tosin");
+// console.log(snakeCase);
+// const kebabCase = _.kebabCase("aluko tosin");
+// console.log(kebabCase);
+// const upperCase = _.upperCase("aluko tosin");
+// console.log(upperCase);
+// const lowerCase = _.lowerCase("ALUKO TOSIN");
+// console.log(lowerCase);
+// const startCase = _.startCase("aluko tosin");
+// console.log(startCase);
+// const last = _.last(words);
+// console.log(last);
 
-// // console.log(volume);
-// /// types of errors
-// // 1. Reference errors
-// // 2. Syntax errors
-// // 3. Type errors
+// const first = _.first(words);
+// console.log(first);
 
-// /// types of modules
-// // 1. CommonJS modules - require
-// // 2. ES6 modules - import/export
-
-// module.exports = { isRead, user, arr, isAdmin };
-
-// /// Assignments
-
-// class Person {
-//   constructor(name, age, country) {
-//     this.name = name;
-//     this.age = age;
-//     this.country = country;
-//   }
-//   details() {
-//     return `My name is ${this.name}, i am ${this.age} living in ${this.country}`;
-//   }
-// }
-
-// const MyDetails = new Person("praise", 24, "Nigeria");
-// console.log(MyDetails.details())
-
-// // // // // // // //
-// class Rectangle{
-//   constructor(height, width){
-//     this.height = height
-//     this.width = width
-//   }
-//   area(){
-//     return `Area ${this.height * this.width}`
-//   }
-//   perimeter(){
-//     return` perimeter ${2 * this.width + this.height}`
-//   }
-// }
-
-// const rectangle1 = new Rectangle(5, 7)
-// console.log(rectangle1.area(), rectangle1.perimeter())
-
-// class Vehicle {
-//   constructor (make,model,year) {
-//     this.make = make;
-//     this.model = model;
-//     this.year = year;
-//   }
-//   displayDetails(){
-//     console.log("Make: " + this.make);
-//      console.log("Model: " + this.model);
-//       console.log("Year: " + this.year)
-//   }
-// }
-// class Car extends Vehicle{
-//   constructor(make,model,year,doors){
-//     super(make,model,year)
-//     this.doors = doors;
-//   }
-//   displayDetails(){
-//     super.displayDetails()
-//     console.log("Doors: " + this.doors)
-//   }
-//   }
-// let car = new Car ("Toyota", " Corolla", 2023, 4);
-// car.displayDetails();
-
-const fs = require("fs");
-const os = require("os");
-const path = require("path");
-const EventEmitter = require("events");
-
-const sampleEmitter = new EventEmitter();
-
-const fileAction = (data) => {
-  const dirPath = path.join(__dirname, "users");
-  const localTempDir = path.join(__dirname, "temp");
-  if (!fs.existsSync(dirPath) || !fs.existsSync(localTempDir)) {
-    fs.mkdirSync(dirPath, { recursive: true });
-    fs.mkdirSync(localTempDir, { recursive: true });
+const server = http.createServer((req, res) => {
+  res.writeHead("200", { "Content-Type": "application/json" });
+  const url = req.url;
+  if (url === "/") {
+    const responseData = {
+      name: "Aluko Tosin",
+      email: "[EMAIL_ADDRESS]",
+      phone: "08036096348",
+      address: {
+        street: "123 Main St",
+        city: "Akure",
+        state: "Ondo",
+        country: "Nigeria",
+      },
+    };
+    res.end(JSON.stringify(responseData));
+  } else if (url === "/about") {
+    res.end(
+      JSON.stringify({
+        message: "Welcome to the about page",
+        author: "Olatunji Abass",
+      }),
+    );
+  } else {
+    res.end(JSON.stringify({ message: "Welcome to the 404 page" }));
   }
-  let filePath = path.join(__dirname, "users", "index.js"); // D:\work\Alusoft\aug-backend-class\users\index.js
-  try {
-    fs.writeFileSync(filePath, data, "utf-8");
-    console.log("File created successfully");
-  } catch (error) {
-    console.log(error);
-  }
-  // let tempDir = os.tmpdir();
-  try {
-    fs.renameSync(filePath, path.join(localTempDir, "index.js")); //
-    console.log("Rename complete!");
-  } catch (error) {
-    console.log(error);
-  }
-  console.log("file moved to temp direction");
-};
+});
 
-sampleEmitter.on("createAndMove", fileAction);
-sampleEmitter.emit("createAndMove", "Hello world");
-sampleEmitter.off("createAndMove", fileAction);
+server.listen(3000, () => {
+  console.log(`Server is running on port 3000 \nvisit http://localhost:3000`);
+});
+users.forEach((user) => {
+  console.log(user);
+});
