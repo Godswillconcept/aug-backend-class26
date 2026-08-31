@@ -1,95 +1,66 @@
-const pluralize = require("pluralize");
-const _ = require("lodash");
-const http = require("http");
-const { users } = require("./example");
+const express = require("express"); // 3rd Party module
+const app = express();
+const { URL } = require("url"); // Built in module
+const path = require("path"); // Built in module
 
-const word1 = "fish";
-const word2 = "developer";
+const productUrl = new URL("/products", "http://localhost:3000");
+productUrl.searchParams.append("id", "123"); // ?id=123
 
-// console.log(
-//   `the plural of ${word1} based on the count ${0} is ${pluralize(word1, 0)}`,
-// );
-// console.log(
-//   `the plural of ${word2} based on the count ${0} is ${pluralize(word2, 0)}`,
-// );
-// console.log(
-//   `the plural of ${word1} based on the count ${0} is ${pluralize(word1, 0)}`,
-// );
+console.log(productUrl.href); // http://localhost:3000/products?id=123
 
-// console.log(pluralize.isPlural("developer"));
-// console.log(pluralize.isSingular("toothpaste"));
-// console.log(pluralize.plural("mouse"));
-// console.log(pluralize.singular("dice"));
-
-// const person = {
-//   name: "Aluko Tosin",
-//   email: "aluko.tosin@gmail.com",
-//   phone: "08036096348",
-//   address: {
-//     street: "123 Main St",
-//     city: "Akure",
-//     state: "Ondo",
-//     country: "Nigeria",
-//   },
-// };
-// const output = _.pick(person, ["name", "email", "phone"]);
-// console.log(output);
-
-// const capitalize = _.capitalize("aluko tosin");
-// console.log(capitalize);
-
-// const words = ["aluko", "tosin", "august", "developer", "ogbe"];
-// const capitalizeWords = _.map(words, _.capitalize);
-// console.log(capitalizeWords);
-// const camelCase = _.camelCase("aluko tosin");
-// console.log(camelCase);
-// const snakeCase = _.snakeCase("aluko tosin");
-// console.log(snakeCase);
-// const kebabCase = _.kebabCase("aluko tosin");
-// console.log(kebabCase);
-// const upperCase = _.upperCase("aluko tosin");
-// console.log(upperCase);
-// const lowerCase = _.lowerCase("ALUKO TOSIN");
-// console.log(lowerCase);
-// const startCase = _.startCase("aluko tosin");
-// console.log(startCase);
-// const last = _.last(words);
-// console.log(last);
-
-// const first = _.first(words);
-// console.log(first);
-
-const server = http.createServer((req, res) => {
-  res.writeHead("200", { "Content-Type": "application/json" });
-  const url = req.url;
-  if (url === "/") {
-    const responseData = {
-      name: "Aluko Tosin",
-      email: "[EMAIL_ADDRESS]",
-      phone: "08036096348",
-      address: {
-        street: "123 Main St",
-        city: "Akure",
-        state: "Ondo",
-        country: "Nigeria",
-      },
-    };
-    res.end(JSON.stringify(responseData));
-  } else if (url === "/about") {
-    res.end(
-      JSON.stringify({
-        message: "Welcome to the about page",
-        author: "Olatunji Abass",
-      }),
-    );
-  } else {
-    res.end(JSON.stringify({ message: "Welcome to the 404 page" }));
-  }
+app.get("/", (req, res) => {
+  res.send(`Hello world `);
 });
 
-server.listen(3000, () => {
-  console.log(`Server is running on port 3000 \nvisit http://localhost:3000`);
+app.get("/about", (req, res) => {
+  res.send("About page");
 });
-users.forEach((user) => {
-  console.log(user);
+
+app.get("/contact", (req, res) => {
+  res.send("Contact page");
+});
+
+app.get("/products", (req, res) => {
+  res.send("Products page");
+});
+
+/// Rendering files with Express
+app.get("/home", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
+/// Json response
+app.get("/items", (req, res) => {
+  res.json({
+    message: "Success",
+  });
+});
+
+/// Using different HTTP methods
+app.get("/signup", (req, res) => {
+  res.sendFile(path.join(__dirname, "signup.html"));
+});
+
+app.post("/signup", (req, res) => {
+  res.send("Form submitted");
+});
+
+app.put("/profile", (req, res) => {
+  res.send("Profile updated");
+});
+
+app.patch("/profile", (req, res) => {
+  res.send("Profile updated partially");
+});
+
+app.delete("/profile", (req, res) => {
+  res.send("Profile deleted");
+});
+
+app.get("/login", (req, res) => {
+  res.send("Login page");
+});
+
+app.listen(3000, () => {
+  console.log(`Server is running on port http://localhost:3000`);
 });

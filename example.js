@@ -1,29 +1,16 @@
-const user = {
-  _id: 123,
-  name: "Aluko Tosin",
-  email: "[EMAIL_ADDRESS]",
-  phone: "08036096348",
-  address: {
-    street: "123 Main St",
-    city: "Akure",
-    state: "Ondo",
-    country: "Nigeria",
-  },
-};
+const http = require("http");
+const server = http.createServer((req, res) => {
+  if (req.url === "/" && req.method === "GET") {
+    res.end("Hello world");
+  } else if (req.url === "/about" && req.method === "GET") {
+    res.end("About page");
+  } else if (req.url === "/contact" && req.method === "GET") {
+    res.end("Contact page");
+  } else {
+    res.end("Page not found");
+  }
+});
 
-const user2 = {
-  _id: 234,
-  name: "Olatunji Abass",
-  email: "[EMAIL_ADDRESS]",
-  phone: "08036096348",
-  address: {
-    street: "123 Main St",
-    city: "Akure",
-    state: "Ondo",
-    country: "Nigeria",
-  },
-};
-
-const users = [user, user2];
-
-module.exports = { users };
+server.listen(4000, () => {
+  console.log("server is running on port http://localhost:4000");
+});
