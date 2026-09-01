@@ -1,0 +1,18 @@
+info:
+  name: Request query usage
+  type: http
+
+http:
+  method: GET
+  url: http://localhost:3000/api/products?name=oraimo
+  params:
+    - name: name
+      value: oraimo
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

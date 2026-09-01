@@ -58,7 +58,95 @@ app.delete("/profile", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  res.send("Login page");
+  res.sendFile(path.join(__dirname, "login.html"));
+});
+
+app.post("/login", (req, res) => {
+  res.send("Login submitted");
+});
+
+app.get("/api", (req, res) => {
+  res.json({
+    message: "API endpoint",
+    version: "1.0.0",
+    description: "Welcome to the API",
+    author: "Alusoft",
+  });
+});
+
+/// Request Query String
+app.get("/api/users", (req, res) => {
+  res.json({ query: req.query });
+});
+
+const products = [
+  {
+    name: "Laptop",
+    price: 1000,
+    quantity: 10,
+  },
+  {
+    name: "Mouse",
+    price: 200,
+    quantity: 20,
+  },
+  {
+    name: "Keyboard",
+    price: 300,
+    quantity: 30,
+  },
+];
+
+app.get("/api/products", (req, res) => {
+  let prodName = req.query.name; // variable assignment
+  const { price, quantity } = req.query; // Destructuring
+  res.json({
+    name: prodName,
+    price,
+    quantity,
+  });
+});
+
+app.get("/api/products/search", (req, res) => {
+  const { name } = req.query;
+  // const product = products.find(
+  //   (product) => product.name.toLowerCase() === name.toLowerCase(),
+  // ); // returns the first element that matches the condition
+
+  const result = products.filter((product) =>
+    product.name.toLowerCase().includes(name.toLowerCase()),
+  ); // returns all the elements that matches the condition
+  if (result.length === 0) {
+    res.status(404).json({ message: "Product not found" });
+    return;
+  }
+  res.json(result);
+});
+
+const users = [
+  { id: 1, name: "John Doe", age: 23 },
+  { id: 2, name: "Jane Doe", age: 25 },
+  { id: 3, name: "Bob Smith", age: 28 },
+  { id: 4, name: "Alice Johnson", age: 30 },
+  { id: 5, name: "Charlie Brown", age: 32 },
+  { id: 6, name: "David Wilson", age: 34 },
+];
+
+/// Request parameters - use it to access resource based on the key specified in the url
+app.get("/api/users/:id", (req, res) => {
+  // res.json(req.params);
+  const { id } = req.params; // destructuring
+  const user = users.find((user) => user.id === Number(id));
+  if (!user) {
+    res.status(404).json({ message: "User not found" });
+    return;
+  }
+  res.json(user);
+});
+
+app.get("/api/programmes/:programId/courses/:courseId", (req, res) => {
+  const { programId, courseId } = req.params;
+  res.json({ programId, courseId });
 });
 
 app.listen(3000, () => {
