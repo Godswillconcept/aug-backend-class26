@@ -2,151 +2,158 @@ const express = require("express"); // 3rd Party module
 const app = express();
 const { URL } = require("url"); // Built in module
 const path = require("path"); // Built in module
+const requestLogger = require("./middlewares/request_logger");
+const {
+  serializeData,
+  caseConvert,
+  middleware1,
+  middleware2,
+  middleware3,
+} = require("./middlewares");
 
-const productUrl = new URL("/products", "http://localhost:3000");
-productUrl.searchParams.append("id", "123"); // ?id=123
+app.use(requestLogger); // global middleware
 
-console.log(productUrl.href); // http://localhost:3000/products?id=123
+/// Middleware Functions
+// 1. inline Middleware Function
+// 2. named Middleware Function
+// 3. array of Middleware Function
+// 4. modular Middleware Function
 
-app.get("/", (req, res) => {
-  res.send(`Hello world `);
-});
+// 1. inline Middleware Function
 
-app.get("/about", (req, res) => {
-  res.send("About page");
-});
-
-app.get("/contact", (req, res) => {
-  res.send("Contact page");
-});
-
-app.get("/products", (req, res) => {
-  res.send("Products page");
-});
-
-/// Rendering files with Express
-app.get("/home", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
-/// Json response
-app.get("/items", (req, res) => {
-  res.json({
-    message: "Success",
-  });
-});
-
-/// Using different HTTP methods
-app.get("/signup", (req, res) => {
-  res.sendFile(path.join(__dirname, "signup.html"));
-});
-
-app.post("/signup", (req, res) => {
-  res.send("Form submitted");
-});
-
-app.put("/profile", (req, res) => {
-  res.send("Profile updated");
-});
-
-app.patch("/profile", (req, res) => {
-  res.send("Profile updated partially");
-});
-
-app.delete("/profile", (req, res) => {
-  res.send("Profile deleted");
-});
-
-app.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "login.html"));
-});
-
-app.post("/login", (req, res) => {
-  res.send("Login submitted");
-});
-
-app.get("/api", (req, res) => {
-  res.json({
-    message: "API endpoint",
-    version: "1.0.0",
-    description: "Welcome to the API",
-    author: "Alusoft",
-  });
-});
-
-/// Request Query String
-app.get("/api/users", (req, res) => {
-  res.json({ query: req.query });
-});
-
-const products = [
-  {
-    name: "Laptop",
-    price: 1000,
-    quantity: 10,
+app.get(
+  "/",
+  (req, res, next) => {
+    console.log("url", req.url);
+    console.log("method", req.method);
+    console.log("from inline middleware");
+    next();
   },
-  {
-    name: "Mouse",
-    price: 200,
-    quantity: 20,
+  (req, res) => {
+    res.end("Hello world");
   },
-  {
-    name: "Keyboard",
-    price: 300,
-    quantity: 30,
+);
+
+app.get(
+  "/health",
+  (req, res, next) => {
+    const { headers } = req;
+    const host = headers.host;
+    const origin = new URL(`http://${host}`).origin;
+    console.log("from inline middleware");
+    console.log("host", host);
+    console.log("origin", origin);
+    next();
   },
-];
+  (req, res) => {
+    res.writeHead(200, { "Content-Type": "text/html" });
+    res.write("health");
+    res.end();
+  },
+);
 
-app.get("/api/products", (req, res) => {
-  let prodName = req.query.name; // variable assignment
-  const { price, quantity } = req.query; // Destructuring
-  res.json({
-    name: prodName,
-    price,
-    quantity,
-  });
+app.get(
+  "/monitor",
+  (req, res, next) => {
+    console.log("time", new Date().toLocaleTimeString());
+    console.log("from inline middleware");
+    next();
+  },
+  (req, res) => {
+    res.writeHead(200, { "Content-Type": "text/html" });
+    res.write("monitor");
+    res.end();
+  },
+);
+
+// named Middleware Function
+
+// const caseConvert = (req, res, next) => {
+//   req.url = req.url.toLowerCase();
+//   console.log("from caseConvert middleware");
+//   console.log("url", req.url);
+//   next();
+// };
+// usage of named middleware function
+app.get("/TeSt", caseConvert, (req, res) => {
+  res.writeHead(200, { "Content-Type": "text/html" });
+  res.write("test");
+  res.end();
 });
 
-app.get("/api/products/search", (req, res) => {
-  const { name } = req.query;
-  // const product = products.find(
-  //   (product) => product.name.toLowerCase() === name.toLowerCase(),
-  // ); // returns the first element that matches the condition
-
-  const result = products.filter((product) =>
-    product.name.toLowerCase().includes(name.toLowerCase()),
-  ); // returns all the elements that matches the condition
-  if (result.length === 0) {
-    res.status(404).json({ message: "Product not found" });
-    return;
-  }
-  res.json(result);
+// another example of named middleware function
+// const serializeData = (req, res, next) => {
+//   req.query = JSON.stringify(req.query);
+//   console.log("from serializeData middleware");
+//   console.log("query", req.query);
+//   next();
+// };
+// usage of named middleware function
+app.get("/serialize", serializeData, (req, res) => {
+  res.writeHead(200, { "Content-Type": "text/html" });
+  res.write("serialize");
+  res.end();
 });
 
-const users = [
-  { id: 1, name: "John Doe", age: 23 },
-  { id: 2, name: "Jane Doe", age: 25 },
-  { id: 3, name: "Bob Smith", age: 28 },
-  { id: 4, name: "Alice Johnson", age: 30 },
-  { id: 5, name: "Charlie Brown", age: 32 },
-  { id: 6, name: "David Wilson", age: 34 },
-];
+// usage of both named and inline middleware functions
+app.get(
+  "/dashboard",
+  (req, res, next) => {
+    const { name } = req.query;
+    if (!name) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.write(JSON.stringify({ message: "Name is required" }));
+      res.end();
+      return;
+    }
+    next();
+  },
+  caseConvert,
+  serializeData,
+  (req, res) => {
+    res.writeHead(200, { "Content-Type": "text/html" });
+    res.write("dashboard");
+    res.end();
+  },
+);
 
-/// Request parameters - use it to access resource based on the key specified in the url
-app.get("/api/users/:id", (req, res) => {
-  // res.json(req.params);
-  const { id } = req.params; // destructuring
-  const user = users.find((user) => user.id === Number(id));
-  if (!user) {
-    res.status(404).json({ message: "User not found" });
-    return;
-  }
-  res.json(user);
+// array of middleware functions
+
+// const middleware1 = (req, res, next) => {
+//   console.log("from middleware1");
+//   next();
+// };
+
+// const middleware2 = (req, res, next) => {
+//   console.log("from middleware2");
+//   next();
+// };
+
+// const middleware3 = (req, res, next) => {
+//   console.log("from middleware3");
+//   next();
+// };
+
+app.get("/array", [middleware1, middleware2, middleware3], (req, res) => {
+  res.writeHead(200, { "Content-Type": "text/html" });
+  res.write("array");
+  res.end();
 });
 
-app.get("/api/programmes/:programId/courses/:courseId", (req, res) => {
-  const { programId, courseId } = req.params;
-  res.json({ programId, courseId });
+app.get("/list", [caseConvert, serializeData], (req, res) => {
+  res.writeHead(200, { "Content-Type": "text/html" });
+  res.write("list");
+  res.end();
+});
+
+app.post("/users", requestLogger, (req, res) => {
+  res.writeHead(200, { "Content-Type": "text/html" });
+  res.write("users");
+  res.end();
+});
+
+app.use((req, res) => {
+  res.status(404).send("Page Not Found");
 });
 
 app.listen(3000, () => {
