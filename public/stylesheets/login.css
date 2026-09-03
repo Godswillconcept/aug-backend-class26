@@ -1,0 +1,9 @@
+@import './common.css';
+
+.actions {
+    margin-top: 0.5rem;
+}
+
+.btn-primary {
+    flex: 1;
+}
