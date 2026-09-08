@@ -1,6 +1,19 @@
+const fs = require("fs");
 // Get all users
+/// loading users data from user.json file
+let jsonContent = fs.readFileSync("./users.json", "utf-8");
 
-const users = [];
+let users;
+try {
+  users = jsonContent.trim() ? JSON.parse(jsonContent) : [];
+} catch (err) {
+  console.error(
+    "Failed to parse users.json, defaulting to empty array:",
+    err.message,
+  );
+  users = [];
+}
+
 const getAllUsers = (req, res) => {
   const { name, age } = req.query;
   console.log(name, age);
@@ -15,6 +28,7 @@ const createUser = (req, res) => {
   const { firstName, lastName, email, password } = req.body;
   console.log({ firstName, lastName, email, password });
   users.push({ id: users.length + 1, firstName, lastName, email, password });
+  fs.writeFileSync("./users.json", JSON.stringify(users, null, 2), "utf8");
   res.json({
     message: "create a new user",
     success: true,
@@ -54,12 +68,7 @@ const updateUser = (req, res) => {
   user.email = email;
   user.password = password;
 
-  //   const updatdUser = Object.assign(user, {
-  //     firstName,
-  //     lastName,
-  //     email,
-  //     password,
-  //   });
+  fs.writeFileSync("./users.json", JSON.stringify(users, null, 2), "utf8");
   res.json({
     message: "user updated successfully",
     success: true,
@@ -77,6 +86,7 @@ const partialUserUpdate = (req, res) => {
     });
   }
   const updatedUser = Object.assign(user, req.body);
+  fs.writeFileSync("./users.json", JSON.stringify(users, null, 2), "utf8");
   res.json({
     message: "user updated successfully",
     success: true,
@@ -95,6 +105,7 @@ const deleteUser = (req, res) => {
   }
 
   users = users.filter((user) => user.id !== Number(id)); // remove deleted user
+  fs.writeFileSync("./users.json", JSON.stringify(users, null, 2), "utf8");
   res.json({
     message: "user deleted successfully",
     success: true,

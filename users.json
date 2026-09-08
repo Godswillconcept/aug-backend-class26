@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "firstName": "Bright",
+    "lastName": "Daniel",
+    "email": "brightdaniel@alusoft.com",
+    "password": "Abcd@1234"
+  },
+  {
+    "id": 2,
+    "firstName": "John",
+    "lastName": "Joe",
+    "email": "johndoe@alusoft.com",
+    "password": "johndoe@123"
+  }
+]

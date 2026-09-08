@@ -1,4 +1,4 @@
-const categories = [];
+let categories = [];
 
 const getAllCategories = (req, res) => {
   res.json({
@@ -73,4 +73,12 @@ const deleteCategory = (req, res) => {
     success: true,
     data: category,
   });
+};
+
+module.exports = {
+  getAllCategories,
+  createCategory,
+  getCategoryById,
+  updateCategory,
+  deleteCategory,
 };
