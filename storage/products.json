@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "name": "Viva Detergent",
+    "price": "2300",
+    "stock": "35",
+    "category": "household"
+  },
+  {
+    "id": 2,
+    "name": "Golden pasta",
+    "price": "1000",
+    "stock": "100",
+    "category": "foodstuff"
+  },
+  {
+    "id": 3,
+    "name": "Yoghurt",
+    "price": "1500",
+    "stock": "20",
+    "category": "drinks"
+  },
+  {
+    "id": 4,
+    "name": "Nutri Yoghurt",
+    "price": "980",
+    "stock": "20",
+    "category": "drinks"
+  }
+]

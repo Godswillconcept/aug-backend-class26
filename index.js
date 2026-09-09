@@ -4,6 +4,8 @@ const app = express();
 const userRoute = require("./routes/user.route"); // importing routes
 const catgoryRoute = require("./routes/catgory.route"); // importing routes
 const authRoute = require("./routes/auth.route");
+const bookRoute = require("./routes/book.route");
+const productRoute = require("./routes/product.route");
 
 // middlewares
 app.use(express.static(join(__dirname, "public")));
@@ -13,6 +15,8 @@ app.use(express.json());
 // routes
 app.use("/api/users", userRoute); // using modular routes with route prefixing
 app.use("/api/categories", catgoryRoute);
+app.use("/api/books", bookRoute);
+app.use("/api/products", productRoute);
 app.use("/api", authRoute);
 
 app.get("/", (req, res) => {
@@ -46,6 +50,6 @@ app.use((req, res) => {
   res.status(404).send("Page Not Found");
 });
 
-app.listen(3000, () => {
-  console.log(`Server is running on port http://localhost:3000`);
+app.listen(4000, () => {
+  console.log(`Server is running on port http://localhost:4000`);
 });

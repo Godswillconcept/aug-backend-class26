@@ -3,7 +3,7 @@ const router = express.Router();
 // const { Router } = express; // object destructuring
 // const router = Router(); // using object destructuring
 
-const userController = require("../controllers/users.controller"); // import controller
+const userController = require("../controllers/user.controller"); // import controller
 
 router.get("/", userController.getAllUsers); // get all users
 

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "title": "Things Fall Apart",
+    "author": "Chinua Achebe",
+    "pageCount": "1234",
+    "publishedDate": "1897",
+    "isbn": "2345678909876543"
+  },
+  {
+    "id": 2,
+    "title": "Essentials of Design",
+    "author": "Olatunji Abass ",
+    "pageCount": "200",
+    "publishedDate": "2022",
+    "isbn": "53856386385734"
+  },
+  {
+    "id": 3,
+    "title": "Modern Biology",
+    "author": "Bayo Sanda ",
+    "pageCount": "1280",
+    "publishedDate": "2020",
+    "isbn": "564557367647574"
+  }
+]

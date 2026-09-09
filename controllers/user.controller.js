@@ -1,7 +1,9 @@
 const fs = require("fs");
+const { join } = require("path");
 // Get all users
 /// loading users data from user.json file
-let jsonContent = fs.readFileSync("./users.json", "utf-8");
+const jsonPath = join(__dirname, "../storage/users.json");
+let jsonContent = fs.readFileSync(jsonPath, "utf-8");
 
 let users;
 try {
@@ -28,7 +30,7 @@ const createUser = (req, res) => {
   const { firstName, lastName, email, password } = req.body;
   console.log({ firstName, lastName, email, password });
   users.push({ id: users.length + 1, firstName, lastName, email, password });
-  fs.writeFileSync("./users.json", JSON.stringify(users, null, 2), "utf8");
+  fs.writeFileSync(jsonPath, JSON.stringify(users, null, 2), "utf8");
   res.json({
     message: "create a new user",
     success: true,
@@ -68,7 +70,7 @@ const updateUser = (req, res) => {
   user.email = email;
   user.password = password;
 
-  fs.writeFileSync("./users.json", JSON.stringify(users, null, 2), "utf8");
+  fs.writeFileSync(jsonPath, JSON.stringify(users, null, 2), "utf8");
   res.json({
     message: "user updated successfully",
     success: true,
@@ -86,7 +88,7 @@ const partialUserUpdate = (req, res) => {
     });
   }
   const updatedUser = Object.assign(user, req.body);
-  fs.writeFileSync("./users.json", JSON.stringify(users, null, 2), "utf8");
+  fs.writeFileSync(jsonPath, JSON.stringify(users, null, 2), "utf8");
   res.json({
     message: "user updated successfully",
     success: true,
@@ -105,7 +107,7 @@ const deleteUser = (req, res) => {
   }
 
   users = users.filter((user) => user.id !== Number(id)); // remove deleted user
-  fs.writeFileSync("./users.json", JSON.stringify(users, null, 2), "utf8");
+  fs.writeFileSync(jsonPath, JSON.stringify(users, null, 2), "utf8");
   res.json({
     message: "user deleted successfully",
     success: true,
