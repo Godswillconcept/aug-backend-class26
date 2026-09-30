@@ -5,7 +5,7 @@ require("./config/database");
 const port = process.env.PORT || 3000;
 
 // routes
-const userRouter = require("./routes/users.route");
+const userRouter = require("./routes/user.route");
 
 app.use(express.json()); // json data pass using req.body
 app.use(express.urlencoded({ extended: true })); // url encoded data pass using req.body

@@ -1,8 +1,12 @@
 const { Sequelize } = require("sequelize");
 
-const sequelize = new Sequelize("api_development", "root", "root", {
+const sequelize = new Sequelize("api_development", "root", "", {
   host: "localhost",
   dialect: "mysql",
+  define: {
+    underscored: true,
+    timestamps: true,
+  },
 });
 
 const connectDB = async () => {

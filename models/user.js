@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
      * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
+     * This method is not a part of DataTypes lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
@@ -13,33 +13,58 @@ module.exports = (sequelize, DataTypes) => {
   }
   User.init(
     {
-      id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-      first_name: { type: DataTypes.STRING, allowNull: false },
-      last_name: { type: DataTypes.STRING, allowNull: false },
-      middle_name: { type: DataTypes.STRING, allowNull: true },
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+      },
+      first_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      last_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      middle_name: {
+        type: DataTypes.STRING,
+      },
       email: {
         type: DataTypes.STRING,
-        unique: true,
         allowNull: false,
-        validate: { isEmail: true, notEmpty: true },
+        unique: true,
+        validate: {
+          isEmail: true,
+          notEmpty: true,
+        },
+      },
+      address: {
+        type: DataTypes.TEXT,
       },
       password: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: { len: [6, 20], notEmpty: true },
       },
+      role: {
+        type: DataTypes.ENUM("student", "instructor", "admin"),
+        allowNull: false,
+        defaultValue: "student",
+      },
+      is_active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+        allowNull: false,
+      },
       gender: {
         type: DataTypes.ENUM("male", "female", "other"),
         allowNull: false,
-        defaultValue: "male",
       },
     },
     {
       sequelize,
       modelName: "User",
-      tableName: "users",
-      timestamps: true,
-      underscored: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
     },
