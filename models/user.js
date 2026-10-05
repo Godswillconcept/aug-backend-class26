@@ -22,10 +22,18 @@ module.exports = (sequelize, DataTypes) => {
       first_name: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notNull: { msg: "First name is required" },
+          notEmpty: { msg: "First name cannot be empty" },
+        },
       },
       last_name: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notNull: { msg: "Last name is required" },
+          notEmpty: { msg: "Last name cannot be empty" },
+        },
       },
       middle_name: {
         type: DataTypes.STRING,
@@ -33,7 +41,10 @@ module.exports = (sequelize, DataTypes) => {
       email: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
+        unique: {
+          name: "users_email_unique",
+          msg: "email already taken",
+        },
         validate: {
           isEmail: true,
           notEmpty: true,

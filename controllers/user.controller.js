@@ -13,20 +13,134 @@ class UserController {
       });
       return res.status(200).json({
         message: "Users fetched successfully",
-        data: {
-          users: rows,
-          meta: {
-            total: count,
-            page: Number(page),
-            per_page: Number(limit),
-            total_page: Math.ceil(count / limit),
-          },
+
+        data: rows,
+        pagination: {
+          total: count,
+          page: Number(page),
+          per_page: Number(limit),
+          total_page: Math.ceil(count / limit),
         },
+
         success: true,
       });
     } catch (error) {
       console.error("Error in getAllUsers:", error);
-      return res.status(500).json({ message: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error", error });
+    }
+  };
+
+  // get user by id
+  static getUserById = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const user = await User.findByPk(id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      return res.status(200).json({
+        message: "User fetched successfully",
+        data: user,
+        success: true,
+      });
+    } catch (error) {
+      return res.status(500).json({ message: "Internal server error", error });
+    }
+  };
+
+  // create user
+  static createUser = async (req, res) => {
+    try {
+      const {
+        first_name,
+        last_name,
+        middle_name,
+        email,
+        password,
+        address,
+        role,
+        is_active,
+        gender,
+      } = req.body;
+
+      const user = await User.create({
+        first_name,
+        last_name,
+        middle_name,
+        email,
+        password,
+        address,
+        role,
+        is_active,
+        gender,
+      });
+
+      return res.status(201).json({
+        message: "User created successfully",
+        data: user,
+        success: true,
+      });
+    } catch (error) {
+      return res.status(500).json({ message: "Internal server error", error });
+    }
+  };
+
+  // update user
+  static updateUser = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const {
+        first_name,
+        last_name,
+        middle_name,
+        email,
+        address,
+        role,
+        is_active,
+        gender,
+      } = req.body;
+
+      const user = await User.findByPk(id);
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const update = await user.update({
+        first_name,
+        last_name,
+        middle_name,
+        email,
+        address,
+        role,
+        is_active,
+        gender,
+      });
+      return res.status(200).json({
+        message: "User updated successfully",
+        data: update,
+        success: true,
+      });
+    } catch (error) {
+      return res.status(500).json({ message: "Internal server error", error });
+    }
+  };
+
+  // delete user
+  static deleteUser = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const user = await User.findByPk(id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      await user.destroy();
+      return res.status(200).json({
+        message: "User deleted successfully",
+        success: true,
+      });
+    } catch (error) {
+      return res.status(500).json({ message: "Internal server error", error });
     }
   };
 }
