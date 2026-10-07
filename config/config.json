@@ -4,7 +4,13 @@
     "password": "",
     "database": "api_development",
     "host": "localhost",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "define": {
+      "underscored": true,
+      "timestamps": true,
+      "createdAt": "created_at",
+      "updatedAt": "updated_at"
+    }
   },
   "test": {
     "username": "root",

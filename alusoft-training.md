@@ -159,3 +159,27 @@ status enum('pending','completed','failed') not null default 'pending',
 created_at timestamp default current_timestamp,
 
 updated_at timestamp default current_timestamp
+
+/// npx sequelize-cli migration:create --name <migration_name> change-user-table-to-users
+/// renaming table
+await queryInterface.renameTable("user", "users");
+await queryInterface.renameTable("student", "students");
+/// change datatype
+await queryInterface.changeColumn("users", "email", {
+type: DataTypes.STRING,
+allowNull: false,
+unique: {
+name: "users_email_unique",
+msg: "email already taken",
+},
+validate: {
+isEmail: true,
+notEmpty: true,
+},
+});
+/// add constraint
+await queryInterface.addConstraint("users", {
+fields: ["phone"],
+type: "unique",
+name: "users_phone_unique",
+});

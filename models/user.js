@@ -9,6 +9,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      if (models.Student) {
+        User.hasOne(models.Student, {
+          foreignKey: "user_id",
+          as: "studentProfile",
+          onDelete: "CASCADE",
+        });
+      }
+      if (models.Instructor) {
+        User.hasOne(models.Instructor, {
+          foreignKey: "user_id",
+          as: "instructorProfile",
+          onDelete: "CASCADE",
+        });
+      }
     }
   }
   User.init(

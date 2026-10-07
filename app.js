@@ -7,13 +7,16 @@ const port = process.env.PORT || 3000;
 // routes
 const userRouter = require("./routes/user.route");
 const courseRouter = require("./routes/course.route");
-
+const programRouter = require("./routes/program.route");
+const studentRouter = require("./routes/student.route");
 app.use(express.json()); // json data pass using req.body
 app.use(express.urlencoded({ extended: true })); // url encoded data pass using req.body
 
 // routes added here
 app.use("/api/users", userRouter);
 app.use("/api/courses", courseRouter);
+app.use("/api/programs", programRouter);
+app.use("/api/students", studentRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

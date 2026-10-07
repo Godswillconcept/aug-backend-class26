@@ -14,10 +14,6 @@ class CourseController {
         order: [["created_at", "DESC"]],
       });
 
-      if (!rows.length) {
-        return res.status(404).json({ message: "No courses found" });
-      }
-
       return res.status(200).json({
         message: "Courses fetched successfully",
         data: rows,
@@ -82,7 +78,7 @@ class CourseController {
       if (!course) {
         return res.status(404).json({ message: "Course not found" });
       }
-      const update = course.update({
+      const update = await course.update({
         title,
         code,
         description,
@@ -107,7 +103,7 @@ class CourseController {
       if (!course) {
         return res.status(404).json({ message: "Course not found" });
       }
-      course.destroy();
+      await course.destroy();
       return res.status(200).json({ message: "Course deleted successfully" });
     } catch (error) {
       return res.status(500).json({ message: "Internal Server error", error });
