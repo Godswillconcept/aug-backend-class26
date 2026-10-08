@@ -9,6 +9,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      // Many-to-Many relationship with program via ProgramCourse model
+      if (models.Program && models.ProgramCourse) {
+        Course.belongsToMany(models.Program, {
+          through: models.ProgramCourse,
+          foreignKey: "course_id",
+          otherKey: "program_id",
+          as: "programs",
+        });
+      }
     }
   }
   Course.init(

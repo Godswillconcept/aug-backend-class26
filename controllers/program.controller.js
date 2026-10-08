@@ -1,4 +1,4 @@
-const { Program } = require("../models");
+const { Program, ProgramCourse, Course } = require("../models");
 
 class ProgramController {
   // get all programs with paginated data
@@ -105,6 +105,38 @@ class ProgramController {
       }
       await program.destroy();
       return res.status(200).json({ message: "Program deleted successfully" });
+    } catch (error) {
+      return res.status(500).json({ message: "Internal Server error", error });
+    }
+  };
+
+  static getProgramCourses = async (req, res) => {
+    try {
+      const { id } = req.params; 
+      const program = await Program.findByPk(parseInt(id));
+      // Check if program exists
+      if (!program) {
+        return res.status(404).json({ message: "Program not found" });
+      }
+
+      // Get all courses for the given program
+      const courses = await ProgramCourse.findAll({
+        where: {
+          program_id: parseInt(id),
+        },
+        include: [
+          {
+            model: Course,
+            as: "course",
+            attributes: ["id", "title", "code", "description", "duration"],
+          },
+        ],
+      });
+
+      return res.status(200).json({
+        message: "Courses fetched successfully",
+        data: courses,
+      });
     } catch (error) {
       return res.status(500).json({ message: "Internal Server error", error });
     }

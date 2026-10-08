@@ -7,5 +7,6 @@ router.post("/", programController.createProgram);
 router.get("/:id", programController.getProgramById);
 router.put("/:id", programController.updateProgram);
 router.delete("/:id", programController.deleteProgram);
+router.get("/:id/courses", programController.getProgramCourses);
 
 module.exports = router;
