@@ -10,6 +10,8 @@ const courseRouter = require("./routes/course.route");
 const programRouter = require("./routes/program.route");
 const studentRouter = require("./routes/student.route");
 const instructorRouter = require("./routes/instructor.route");
+const paymentRouter = require("./routes/payment.route");
+const enrolmentRouter = require("./routes/enrolment.route");
 app.use(express.json()); // json data pass using req.body
 app.use(express.urlencoded({ extended: true })); // url encoded data pass using req.body
 
@@ -19,6 +21,8 @@ app.use("/api/courses", courseRouter);
 app.use("/api/programs", programRouter);
 app.use("/api/students", studentRouter);
 app.use("/api/instructors", instructorRouter);
+app.use("/api/payments", paymentRouter);
+app.use("/api/enrolments", enrolmentRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

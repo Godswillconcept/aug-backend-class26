@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       if (models.Student) {
         User.hasOne(models.Student, {
           foreignKey: "user_id",
-          as: "studentProfile",
+          as: "student",
           onDelete: "CASCADE",
         });
       }
