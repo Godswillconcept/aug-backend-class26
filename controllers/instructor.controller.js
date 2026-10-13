@@ -1,4 +1,10 @@
-const { Instructor, User, sequelize } = require("../models");
+const {
+  Instructor,
+  User,
+  Course,
+  InstructorCourse,
+  sequelize,
+} = require("../models");
 
 class InstructorController {
   // create instructor profile for existing user
@@ -243,6 +249,144 @@ class InstructorController {
         .json({ message: "Instructor deleted successfully", data: instructor });
     } catch (error) {
       return res.status(500).json({ message: "Internal server error", error });
+    }
+  };
+
+  static getInstructorCourses = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const instructor = await Instructor.findByPk(parseInt(id));
+      // Check if instructor exists
+      if (!instructor) {
+        return res.status(404).json({ message: "Instructor not found" });
+      }
+
+      // Get all courses for the given instructor
+      const courses = await instructor.getCourses();
+
+      return res.status(200).json({
+        message: "Courses fetched successfully",
+        data: courses,
+      });
+    } catch (error) {
+      return res.status(500).json({ message: "Internal Server error", error });
+    }
+  };
+
+  static attachCourses = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { coursesInfo } = req.body;
+
+      const instructor = await Instructor.findByPk(id);
+      if (!instructor) {
+        return res.status(404).json({ message: "Instructor not found" });
+      }
+
+      const courseIds = coursesInfo.map((course) => parseInt(course.course_id));
+      const existingCourses = await Course.findAll({
+        where: { id: courseIds },
+        attributes: ["id"],
+      });
+
+      const existingCourseIds = existingCourses.map((c) => c.id);
+      const missingCourseIds = courseIds.filter(
+        (id) => !existingCourseIds.includes(id),
+      );
+
+      if (missingCourseIds.length > 0) {
+        return res.status(400).json({
+          message: "Some courses do not exist",
+          missingCourseIds,
+        });
+      }
+
+      // check if courses already attached to this instructor
+      const existingInstructorCourses = await InstructorCourse.findAll({
+        where: { instructor_id: id },
+      });
+      const existingInstructorCourseIds = existingInstructorCourses.map(
+        (c) => c.course_id,
+      );
+      const duplicateCourseIds = courseIds.filter((id) =>
+        existingInstructorCourseIds.includes(id),
+      );
+
+      if (duplicateCourseIds.length > 0) {
+        return res.status(400).json({
+          message: "Some courses already attached to this instructor",
+          duplicateCourseIds,
+        });
+      }
+
+      const courses = await InstructorCourse.bulkCreate(
+        coursesInfo.map((course) => {
+          return {
+            instructor_id: id,
+            course_id: course.course_id,
+            assigned_at: course.assigned_at || new Date(),
+          };
+        }),
+      );
+
+      return res.status(200).json({
+        message: "Courses attached successfully",
+        data: courses,
+      });
+    } catch (error) {
+      console.log("error", error);
+      return res.status(500).json({ message: "Internal Server error", error });
+    }
+  };
+
+  static detachCourses = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { courseIds } = req.body;
+      // find the instructor
+      const instructor = await Instructor.findByPk(id);
+      if (!instructor) {
+        return res.status(404).json({ message: "Instructor not found" });
+      }
+
+      if (!Array.isArray(courseIds) || courseIds.length === 0) {
+        return res.status(400).json({
+          message: "Please provide an array of course ids",
+        });
+      }
+
+      // convert to integers
+      const courseIdsInt = courseIds.map((id) => parseInt(id));
+
+      // retrieve existing courses attached to the instructor
+      const existingCourses = await InstructorCourse.findAll({
+        where: { instructor_id: id },
+      });
+
+      const coursesToRemove = existingCourses.filter((course) =>
+        courseIdsInt.includes(course.course_id),
+      );
+
+      if (coursesToRemove.length === 0) {
+        return res.status(400).json({
+          message: "No courses found to detach",
+        });
+      }
+
+      // remove the courses from the instructor
+      await InstructorCourse.destroy({
+        where: {
+          instructor_id: id,
+          course_id: coursesToRemove.map((course) => course.course_id),
+        },
+      });
+
+      return res.status(200).json({
+        message: "Courses detached successfully",
+        data: coursesToRemove,
+      });
+    } catch (error) {
+      return res.status(500).json({ message: "Internal Server error", error });
     }
   };
 }

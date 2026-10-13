@@ -37,7 +37,6 @@ module.exports = (sequelize, DataTypes) => {
       program_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true,
         references: {
           model: "programs",
           key: "id",
@@ -48,7 +47,6 @@ module.exports = (sequelize, DataTypes) => {
       course_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true,
         references: {
           model: "courses",
           key: "id",
@@ -81,6 +79,12 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "ProgramCourse",
+      indexes: [
+        {
+          unique: true,
+          fields: ["program_id", "course_id"],
+        },
+      ],
     },
   );
   return ProgramCourse;

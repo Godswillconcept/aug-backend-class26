@@ -18,6 +18,16 @@ module.exports = (sequelize, DataTypes) => {
           as: "programs",
         });
       }
+
+      // many to many with courses via InstructorCourse model
+      if (models.Instructor && models.InstructorCourse) {
+        Course.belongsToMany(models.Instructor, {
+          through: models.InstructorCourse,
+          foreignKey: "course_id",
+          otherKey: "instructor_id",
+          as: "instructors",
+        });
+      }
     }
   }
   Course.init(

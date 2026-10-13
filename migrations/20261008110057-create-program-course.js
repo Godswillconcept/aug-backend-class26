@@ -12,7 +12,6 @@ module.exports = {
       program_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        unique: true,
         references: {
           model: "programs",
           key: "id",
@@ -23,7 +22,6 @@ module.exports = {
       course_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        unique: true,
         references: {
           model: "courses",
           key: "id",

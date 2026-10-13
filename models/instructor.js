@@ -17,6 +17,15 @@ module.exports = (sequelize, DataTypes) => {
           onUpdate: "CASCADE",
         });
       }
+      // many to many with courses via InstructorCourse model
+      if (models.Course && models.InstructorCourse) {
+        Instructor.belongsToMany(models.Course, {
+          through: models.InstructorCourse,
+          foreignKey: "instructor_id",
+          otherKey: "course_id",
+          as: "courses",
+        });
+      }
     }
   }
   Instructor.init(

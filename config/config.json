@@ -5,6 +5,7 @@
     "database": "api_development",
     "host": "localhost",
     "dialect": "mysql",
+    "logging": true,
     "define": {
       "underscored": true,
       "timestamps": true,

@@ -3,6 +3,7 @@ const { Sequelize } = require("sequelize");
 const sequelize = new Sequelize("api_development", "root", "", {
   host: "localhost",
   dialect: "mysql",
+  logging: true,
   define: {
     underscored: true,
     timestamps: true,
