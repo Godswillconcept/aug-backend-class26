@@ -1,4 +1,5 @@
 const { User } = require("../models");
+const bcrypt = require("bcryptjs");
 
 class UserController {
   static getAllUsers = async (req, res) => {
@@ -98,6 +99,7 @@ class UserController {
         role,
         is_active,
         gender,
+        password,
       } = req.body;
 
       const user = await User.findByPk(id);
@@ -106,7 +108,7 @@ class UserController {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const update = await user.update({
+      const updateData = {
         first_name,
         last_name,
         middle_name,
@@ -115,7 +117,14 @@ class UserController {
         role,
         is_active,
         gender,
-      });
+      };
+
+      if (password) {
+        updateData.password = password;
+      }
+
+      const update = await user.update(updateData);
+
       return res.status(200).json({
         message: "User updated successfully",
         data: update,
