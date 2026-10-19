@@ -45,6 +45,7 @@ class UserController {
         success: true,
       });
     } catch (error) {
+      console.log("error", error);
       return res.status(500).json({ message: "Internal server error", error });
     }
   };
@@ -107,6 +108,7 @@ class UserController {
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
+      console.log("hello i am here");
 
       const updateData = {
         first_name,

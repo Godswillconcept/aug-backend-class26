@@ -1,14 +1,35 @@
 const express = require("express");
 const router = express.Router();
 const programController = require("../controllers/program.controller");
+const { authenticate, authorize } = require("../middlewares/auth.middleware");
 
-router.get("/", programController.getAllPrograms);
-router.post("/", programController.createProgram);
-router.get("/:id", programController.getProgramById);
-router.put("/:id", programController.updateProgram);
-router.delete("/:id", programController.deleteProgram);
-router.get("/:id/courses", programController.getProgramCourses);
-router.post("/:id/courses", programController.attachCourses);
-router.delete("/:id/courses", programController.detachCourses);
+router.get("/", programController.getAllPrograms); // public
+router.post(
+  "/",
+  authenticate,
+  authorize("admin"),
+  programController.createProgram,
+); // private
+router.get("/:id", programController.getProgramById); // public
+router.put(
+  "/:id",
+  authenticate,
+  authorize("admin"),
+  programController.updateProgram,
+); // private
+router.delete(
+  "/:id",
+  authenticate,
+  authorize("admin"),
+  programController.deleteProgram,
+); // private
+router.get("/:id/courses", programController.getProgramCourses); // public
+router.post(
+  "/:id/courses",
+  authenticate,
+  authorize("admin"),
+  programController.attachCourses,
+); // private
+router.delete("/:id/courses", programController.detachCourses); // private
 
 module.exports = router;

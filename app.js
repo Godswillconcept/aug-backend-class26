@@ -1,4 +1,5 @@
 const express = require("express");
+
 const { ValidationError: SequelizeValidationError } = require("sequelize");
 const app = express();
 require("./config/database");
@@ -12,10 +13,15 @@ const studentRouter = require("./routes/student.route");
 const instructorRouter = require("./routes/instructor.route");
 const paymentRouter = require("./routes/payment.route");
 const enrolmentRouter = require("./routes/enrolment.route");
+const authRouter = require("./routes/auth.route");
+
+
+app.use(express.static("uploads")); // for access uploaded images on the root url (eg. localhost:3000/1k5a0skjgs0ghl1juh34.png)
 app.use(express.json()); // json data pass using req.body
 app.use(express.urlencoded({ extended: true })); // url encoded data pass using req.body
 
 // routes added here
+app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/courses", courseRouter);
 app.use("/api/programs", programRouter);

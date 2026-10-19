@@ -31,8 +31,12 @@ const authenticate = async (req, res, next) => {
     const user = await User.findByPk(decoded.id, {
       attributes: { exclude: ["password"] },
       include: [
-        { model: Student, as: "student", attributes: ["id"] },
-        { model: Instructor, as: "instructor", attributes: ["id"] },
+        { model: Student, as: "student", attributes: { exclude: ["user_id", "created_at", "updated_at"] } },
+        {
+          model: Instructor,
+          as: "instructor",
+          attributes: { exclude: ["user_id", "created_at", "updated_at"] },
+        },
       ],
     });
 
@@ -50,6 +54,10 @@ const authenticate = async (req, res, next) => {
         message: error.message,
       });
     }
+    return res.status(500).json({
+      message: "Internal server error",
+      error,
+    });
   }
 };
 

@@ -28,6 +28,9 @@ module.exports = (sequelize, DataTypes) => {
 
     // instance method to validate password (compare plain with hashed values)
     async validatePassword(password) {
+      if (!this.password || !password) {
+        return false;
+      }
       return bcrypt.compare(password, this.password);
     }
   }
@@ -56,6 +59,9 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       middle_name: {
+        type: DataTypes.STRING,
+      },
+      profile_pic: {
         type: DataTypes.STRING,
       },
       email: {
