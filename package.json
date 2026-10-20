@@ -17,7 +17,9 @@
     "db:seed:undo:all": "npx sequelize-cli db:seed:undo:all",
     "migrate:generate": "npx sequelize-cli migration:generate",
     "model:generate": "npx sequelize-cli model:generate",
-    "seed:generate": "npx sequelize-cli seed:generate"
+    "seed:generate": "npx sequelize-cli seed:generate",
+    "docs:generate": "node docs/generate-postman-collection.js",
+    "docs:check": "node docs/check-route-coverage.js"
   },
   "keywords": [],
   "author": "",
