@@ -92,6 +92,9 @@ module.exports = {
         role: admin.role,
         gender: admin.gender,
         is_active: true,
+        profile_pic: null,
+        otp: null,
+        otp_expires_at: null,
         address: `${Math.floor(Math.random() * 100) + 1} ${getRandomItem(["Adeola Odeku", "Isaac John", "Akin Adesola", "Ologun Agbaje", "Sanusi Fafunwa"])} Street, ${getRandomItem(["Victoria Island", "Ikoyi", "Lekki", "Ikeja", "Surulere"])}, ${getRandomItem(nigerianStates)}`,
         created_at: getRandomDate(startDate, endDate),
         updated_at: getRandomDate(startDate, endDate)
@@ -122,6 +125,9 @@ module.exports = {
         role: "instructor",
         gender: gender,
         is_active: true,
+        profile_pic: null,
+        otp: null,
+        otp_expires_at: null,
         address: `${Math.floor(Math.random() * 100) + 1} ${getRandomItem(["Awolowo", "Herbert Macaulay", "Murtala Muhammed", "Nnamdi Azikiwe", "Obafemi Awolowo"])} Way, ${getRandomItem(["Yaba", "Surulere", "Ikeja", "Lekki", "Ajah"])}, ${getRandomItem(nigerianStates)}`,
         created_at: getRandomDate(startDate, endDate),
         updated_at: getRandomDate(startDate, endDate)
@@ -145,6 +151,9 @@ module.exports = {
         role: "student",
         gender: gender,
         is_active: true,
+        profile_pic: null,
+        otp: null,
+        otp_expires_at: null,
         address: `${Math.floor(Math.random() * 100) + 1} ${getRandomItem(["Bode Thomas", "Ademola Adetokunbo", "Kofo Abayomi", "Olu Holloway", "Adeyemo Alakija"])} Street, ${getRandomItem(["Lagos Mainland", "Lagos Island", "Epe", "Badagry", "Ikorodu"])}, ${getRandomItem(nigerianStates)}`,
         created_at: getRandomDate(startDate, endDate),
         updated_at: getRandomDate(startDate, endDate)
