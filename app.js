@@ -2,6 +2,7 @@ const express = require("express");
 
 const { ValidationError: SequelizeValidationError } = require("sequelize");
 const app = express();
+const cors = require("cors");
 require("./config/database");
 const port = process.env.PORT || 3000;
 
@@ -15,7 +16,14 @@ const paymentRouter = require("./routes/payment.route");
 const enrolmentRouter = require("./routes/enrolment.route");
 const authRouter = require("./routes/auth.route");
 
-
+const corsOptions = {
+  origin: ["http://localhost:5173", "http://localhost:5174"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  exposedHeaders: ["Content-Length", "Authorization"],
+  credentials: true,
+}
+app.use(cors(corsOptions));
 app.use(express.static("uploads")); // for access uploaded images on the root url (eg. localhost:3000/1k5a0skjgs0ghl1juh34.png)
 app.use(express.json()); // json data pass using req.body
 app.use(express.urlencoded({ extended: true })); // url encoded data pass using req.body

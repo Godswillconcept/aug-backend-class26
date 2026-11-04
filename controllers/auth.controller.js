@@ -254,8 +254,12 @@ class AuthController {
         return res.status(400).json({ message: "Profile picture is required", success: false });
       }
 
+      // Normalize path to use forward slashes and strip leading 'uploads/' or 'uploads\'
+      const normalizedPath = req.file.path.replace(/\\/g, "/");
+      const relativePath = normalizedPath.replace(/^(\.\/)?uploads\//, "");
+
       // Upload new profile picture
-      await user.update({ profile_pic: req.file.path });
+      await user.update({ profile_pic: relativePath });
 
       const userJson = user.toJSON();
       delete userJson.password; // Setting user password to null in response
