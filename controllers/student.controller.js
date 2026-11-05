@@ -1,5 +1,26 @@
 const { Student, User, sequelize } = require("../models");
 
+// Sanitize internal errors so raw SQL/Sequelize detail is never leaked to clients.
+function handleControllerError(error) {
+  console.error("Student controller error:", error);
+  if (error && error.name === "SequelizeValidationError") {
+    return {
+      status: 400,
+      message: error.errors?.[0]?.message || error.message || "Validation failed",
+    };
+  }
+  if (error && error.name === "SequelizeUniqueConstraintError") {
+    return {
+      status: 400,
+      message: error.errors?.[0]?.message || "A record with this value already exists",
+    };
+  }
+  if (error && error.name === "SequelizeDatabaseError") {
+    return { status: 500, message: "A database error occurred while processing the request" };
+  }
+  return { status: 500, message: "Internal server error" };
+}
+
 class StudentController {
   // create student profile for existing user
   static createStudent = async (req, res) => {
@@ -73,7 +94,8 @@ class StudentController {
       });
     } catch (error) {
       await t.rollback();
-      return res.status(500).json({ message: "Internal server error", error });
+      const safe = handleControllerError(error);
+      return res.status(safe.status).json({ message: safe.message });
     }
   };
 
@@ -95,14 +117,25 @@ class StudentController {
         guardian_phone,
       } = req.body;
 
-      // create user
+      if (!first_name || !last_name || !email || !gender) {
+        await t.rollback();
+        return res
+          .status(400)
+          .json({ message: "First name, last name, email, and gender are required" });
+      }
+      if (!dob) {
+        await t.rollback();
+        return res.status(400).json({ message: "Date of birth is required" });
+      }
+
+      // create user. Password is optional (provisioned accounts).
       const user = await User.create(
         {
           first_name,
           last_name,
           middle_name,
           email,
-          password,
+          password: password || null,
           gender,
           role: "student",
           is_active: true,
@@ -144,7 +177,8 @@ class StudentController {
       });
     } catch (error) {
       await t.rollback();
-      return res.status(500).json({ message: "Internal server error", error });
+      const safe = handleControllerError(error);
+      return res.status(safe.status).json({ message: safe.message });
     }
   };
 
@@ -203,7 +237,8 @@ class StudentController {
         data: student,
       });
     } catch (error) {
-      return res.status(500).json({ message: "Internal server error", error });
+      const safe = handleControllerError(error);
+      return res.status(safe.status).json({ message: safe.message });
     }
   };
 
@@ -236,7 +271,8 @@ class StudentController {
         data: updatedStudent,
       });
     } catch (error) {
-      return res.status(500).json({ message: "Internal server error", error });
+      const safe = handleControllerError(error);
+      return res.status(safe.status).json({ message: safe.message });
     }
   };
 
@@ -253,7 +289,8 @@ class StudentController {
         .status(200)
         .json({ message: "Student deleted successfully", data: student });
     } catch (error) {
-      return res.status(500).json({ message: "Internal server error", error });
+      const safe = handleControllerError(error);
+      return res.status(safe.status).json({ message: safe.message });
     }
   };
 }

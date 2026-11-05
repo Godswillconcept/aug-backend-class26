@@ -6,6 +6,27 @@ const {
   sequelize,
 } = require("../models");
 
+// Sanitize internal errors so raw SQL/Sequelize detail is never leaked to clients.
+function handleControllerError(error) {
+  console.error("Instructor controller error:", error);
+  if (error && error.name === "SequelizeValidationError") {
+    return {
+      status: 400,
+      message: error.errors?.[0]?.message || error.message || "Validation failed",
+    };
+  }
+  if (error && error.name === "SequelizeUniqueConstraintError") {
+    return {
+      status: 400,
+      message: error.errors?.[0]?.message || "A record with this value already exists",
+    };
+  }
+  if (error && error.name === "SequelizeDatabaseError") {
+    return { status: 500, message: "A database error occurred while processing the request" };
+  }
+  return { status: 500, message: "Internal server error" };
+}
+
 class InstructorController {
   // create instructor profile for existing user
   static createInstructor = async (req, res) => {
@@ -71,7 +92,8 @@ class InstructorController {
       });
     } catch (error) {
       await t.rollback();
-      return res.status(500).json({ message: "Internal server error", error });
+      const safe = handleControllerError(error);
+      return res.status(safe.status).json({ message: safe.message });
     }
   };
 
@@ -92,14 +114,27 @@ class InstructorController {
         years_experience,
       } = req.body;
 
-      // create user
+      if (!first_name || !last_name || !email || !gender) {
+        await t.rollback();
+        return res
+          .status(400)
+          .json({ message: "First name, last name, email, and gender are required" });
+      }
+      if (!specialization || years_experience === undefined || years_experience === "") {
+        await t.rollback();
+        return res
+          .status(400)
+          .json({ message: "Specialization and years of experience are required" });
+      }
+
+      // create user. Password is optional (provisioned accounts).
       const user = await User.create(
         {
           first_name,
           last_name,
           middle_name,
           email,
-          password,
+          password: password || null,
           gender,
           role: "instructor",
           is_active: true,
@@ -140,7 +175,8 @@ class InstructorController {
       });
     } catch (error) {
       await t.rollback();
-      return res.status(500).json({ message: "Internal server error", error });
+      const safe = handleControllerError(error);
+      return res.status(safe.status).json({ message: safe.message });
     }
   };
 
@@ -199,7 +235,8 @@ class InstructorController {
         data: instructor,
       });
     } catch (error) {
-      return res.status(500).json({ message: "Internal server error", error });
+      const safe = handleControllerError(error);
+      return res.status(safe.status).json({ message: safe.message });
     }
   };
 
@@ -231,7 +268,8 @@ class InstructorController {
         data: updatedInstructor,
       });
     } catch (error) {
-      return res.status(500).json({ message: "Internal server error", error });
+      const safe = handleControllerError(error);
+      return res.status(safe.status).json({ message: safe.message });
     }
   };
 
@@ -248,7 +286,8 @@ class InstructorController {
         .status(200)
         .json({ message: "Instructor deleted successfully", data: instructor });
     } catch (error) {
-      return res.status(500).json({ message: "Internal server error", error });
+      const safe = handleControllerError(error);
+      return res.status(safe.status).json({ message: safe.message });
     }
   };
 
@@ -269,7 +308,8 @@ class InstructorController {
         data: courses,
       });
     } catch (error) {
-      return res.status(500).json({ message: "Internal Server error", error });
+      const safe = handleControllerError(error);
+      return res.status(safe.status).json({ message: safe.message });
     }
   };
 
@@ -334,8 +374,8 @@ class InstructorController {
         data: courses,
       });
     } catch (error) {
-      console.log("error", error);
-      return res.status(500).json({ message: "Internal Server error", error });
+      const safe = handleControllerError(error);
+      return res.status(safe.status).json({ message: safe.message });
     }
   };
 
@@ -386,7 +426,8 @@ class InstructorController {
         data: coursesToRemove,
       });
     } catch (error) {
-      return res.status(500).json({ message: "Internal Server error", error });
+      const safe = handleControllerError(error);
+      return res.status(safe.status).json({ message: safe.message });
     }
   };
 }
